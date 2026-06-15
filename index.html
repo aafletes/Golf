@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>'Cock Fight!!!! — Golf Pool</title>
+<style>
+  :root{
+    /* 2026 U.S. Open — Shinnecock Hills palette */
+    --green:#0a1f44;        /* USGA navy (primary) */
+    --green2:#16315f;       /* navy 2 */
+    --gold:#c8102e;         /* U.S. Open red accent */
+    --bg:#f1ece1;           /* links fescue / sand */
+    --card:#ffffff; --line:#e0d9cb; --ink:#16203a; --muted:#7a7466; --danger:#b3261e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(135deg,#071633,var(--green) 55%,var(--green2));color:#fff;
+    padding:26px 18px 18px;border-bottom:4px solid var(--gold);position:relative}
+  header .wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;text-align:center}
+  header .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c9d4ea;font-weight:700;margin:0 auto 6px;max-width:none}
+  header h1{margin:0 auto;font-family:Georgia,'Times New Roman',serif;font-size:30px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+  header .venue{margin:8px auto 0;font-family:Georgia,serif;font-size:15px;color:#fff;text-transform:uppercase;letter-spacing:1px;max-width:none}
+  header .venue b{color:var(--gold);font-style:normal}
+  header p{margin:6px auto 0;opacity:.82;font-size:13px;text-transform:uppercase;letter-spacing:.5px;max-width:560px}
+  header .flag{position:absolute;top:0;right:0;bottom:0;width:120px;
+    background:repeating-linear-gradient(180deg,transparent 0 14px,rgba(255,255,255,.04) 14px 28px);opacity:.5}
+  nav{max-width:920px;margin:0 auto;display:flex;gap:6px;padding:12px 18px 0;background:#071633}
+  nav button{flex:1;background:transparent;border:none;border-bottom:3px solid transparent;color:#aebbd4;
+    padding:11px 6px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;cursor:pointer}
+  nav button.active{color:#fff;border-bottom-color:var(--gold)}
+  main{max-width:920px;margin:0 auto;padding:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .tier-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 4px}
+  .tier-head h3{margin:0;font-size:17px;color:var(--green)}
+  .tier-head .pick{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .golfers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  @media(max-width:560px){.golfers{grid-template-columns:1fr}}
+  label.golfer{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;
+    padding:9px 11px;cursor:pointer;transition:.12s;background:#fbfaf6}
+  label.golfer:hover{border-color:var(--green2)}
+  label.golfer.sel{border-color:var(--green2);background:#eaf0fa;box-shadow:inset 0 0 0 1px var(--green2)}
+  label.golfer input{accent-color:var(--green2);width:16px;height:16px}
+  .gname{font-weight:600;font-size:14px}
+  .gmeta{font-size:11px;color:var(--muted)}
+  .gmeta b{color:var(--ink)}
+  .links{display:inline-flex;gap:6px;margin-top:5px}
+  .links a{font-size:10px;font-weight:700;letter-spacing:.3px;text-decoration:none;padding:2px 7px;border-radius:20px;
+    border:1px solid var(--line);color:var(--green);background:#fff}
+  .links a.espn{color:#fff;background:#c8102e;border-color:#c8102e}
+  .links a.kalshi{color:#fff;background:#0a1f44;border-color:#0a1f44}
+  .links a:hover{opacity:.85}
+  .gamecast{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;text-decoration:none;
+    color:#0a1f44;background:#fff;border-radius:20px;padding:6px 13px}
+  .gamecast:hover{opacity:.9}
+  details.picks a{color:var(--green2);font-weight:700;text-decoration:none}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+  .field input,.field select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.row2{grid-template-columns:1fr}}
+  .terms{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--muted);margin:6px 0 14px}
+  .btn{background:var(--green2);color:#fff;border:none;border-radius:9px;padding:12px 20px;font-size:15px;
+    font-weight:700;cursor:pointer}
+  .btn:hover{background:var(--green)}
+  .btn.ghost{background:#fff;color:var(--green);border:1px solid var(--green2)}
+  .btn.sm{padding:7px 12px;font-size:13px}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid var(--danger)}
+  .err{color:var(--danger);font-size:12px;margin-top:4px;min-height:0}
+  .banner{padding:12px 14px;border-radius:9px;margin-bottom:14px;font-size:14px;display:none}
+  .banner.ok{background:#eaf0fa;border:1px solid #b9c7e2;color:#0a1f44;display:block}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.entry:hover{background:#fafbf8}
+  .rank{font-weight:800;color:var(--green)}
+  .tag{display:inline-block;background:#eaf0fa;color:var(--green);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600}
+  details.picks summary{cursor:pointer;color:var(--green2);font-size:12px;font-weight:600}
+  details.picks ul{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--muted)}
+  details.picks li.dropped{text-decoration:line-through;opacity:.55}
+  .cut{display:inline-block;background:#c8102e;color:#fff;border-radius:4px;padding:0 5px;font-size:10px;font-weight:700;text-decoration:none}
+  .pend{display:inline-block;background:#e0d9cb;color:#5b5648;border-radius:4px;padding:0 5px;font-size:10px;font-weight:700}
+  /* ---- Golf-style leaderboard ---- */
+  .under{color:#c8102e;font-weight:700}   /* under par = red, like TV */
+  .over{color:var(--ink)}
+  .even{color:var(--muted)}
+  table.board th.rnd,table.board td.rnd{width:42px;text-align:center;font-variant-numeric:tabular-nums}
+  table.board td.r-cell{color:var(--muted)}
+  table.board td.total-cell b{font-size:15px}
+  .team-cell .name-sub{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+  tr.detail-row td{padding:0 8px 10px;border-bottom:2px solid var(--line);background:#fbfaf6}
+  tr.entry td{border-bottom:none}
+  /* condensed golfer rows in a team card */
+  .gline{display:grid;grid-template-columns:1fr 152px 42px;gap:8px;align-items:center;
+    padding:5px 2px;border-bottom:1px solid #ece6d8;font-size:12px}
+  .gline.ghead{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;
+    letter-spacing:.3px;border-bottom:1px solid var(--line)}
+  .gl-name{font-weight:600;line-height:1.25}
+  .gl-name .ok{color:#2e7d32;font-size:9px;margin-right:1px}
+  .gl-name .pend{background:none;color:var(--muted);padding:0}
+  .gl-lnk{display:block;font-size:10px;font-weight:700;margin-top:1px}
+  .gl-lnk a{color:var(--green2);text-decoration:none}
+  .gl-rounds{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;font-variant-numeric:tabular-nums}
+  .gl-rounds i{font-style:normal}
+  .gl-tot{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+  .gline.dropped{opacity:.55}
+  .gline.dropped .gl-name .nm{text-decoration:line-through}
+  details.picks summary{cursor:pointer;padding:8px 0 6px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .tc-team{font-weight:800;color:var(--green);font-size:14px}
+  .tc-sub{color:var(--muted);font-size:11px;font-weight:600}
+  .team-card-body{max-width:560px}
+  .locked-note{color:var(--muted);font-size:12px;padding:8px 2px;margin:0}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .muted{color:var(--muted);font-size:13px}
+  .admin-golfer{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
+  .admin-golfer .gname{flex:1;font-size:13px}
+  .admin-golfer .rinputs{display:flex;gap:5px}
+  .admin-golfer input{width:46px;padding:6px;border:1px solid var(--line);border-radius:6px;text-align:center}
+  .admin-head{display:flex;align-items:center;gap:8px;padding:2px 0}
+  .admin-head .gname{flex:1}
+  .admin-head .rlabels{display:flex;gap:5px}
+  .admin-head .rlabels i{width:46px;text-align:center;font-style:normal;font-size:10px;font-weight:700;color:var(--muted)}
+  .pill{font-size:11px;color:var(--muted)}
+  .hide{display:none}
+  .empty{text-align:center;color:var(--muted);padding:30px}
+  .live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.6px;
+    color:#c8102e;border:1px solid #c8102e;border-radius:20px;padding:3px 10px}
+  .live .dot{width:8px;height:8px;border-radius:50%;background:#c8102e;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
+  .updated{font-size:11px;color:var(--muted);margin-left:8px}
+
+  /* ---------- MOBILE ---------- */
+  @media(max-width:600px){
+    header{padding:18px 14px 14px}
+    header h1{font-size:23px}
+    header .eyebrow{font-size:10px;letter-spacing:2px}
+    header .venue{font-size:13px}
+    header p{font-size:12.5px}
+    nav{padding:10px 8px 0;gap:2px}
+    nav button{font-size:11px;letter-spacing:.3px;padding:10px 2px}
+    main{padding:12px}
+    .card{padding:13px;border-radius:10px}
+    .toolbar{gap:6px}
+
+    /* Leaderboard keeps the SAME table layout as desktop, just tighter */
+    #boardWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    table.board{font-size:12px}
+    table.board th,table.board td{padding:7px 4px}
+    table.board th.rnd,table.board td.rnd{width:30px}
+    .team-cell .name-sub{font-size:10px}
+    .team-card-body{max-width:100%}
+    .gline{grid-template-columns:1fr 116px 34px;gap:6px;font-size:12px}
+    .gline .gl-rounds{font-size:11px}
+    .gline .gl-lnk{font-size:9px}
+  }
+  @media(max-width:380px){
+    .golfers{gap:6px}
+    header h1{font-size:20px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow">126th U.S. Open Championship · June 18–21, 2026</p>
+    <h1>🐓 'Cock Fight!!!!</h1>
+    <p class="venue">Shinnecock Hills Golf Club · <b>Southampton, New York</b></p>
+    <p>Tiered golf pool — pick one golfer from each tier, set your tiebreaker, and track it live.</p>
+    <a class="gamecast" href="https://www.espn.com/golf/leaderboard" target="_blank" rel="noopener">📋 Live Leaderboard &amp; Gamecast on ESPN →</a>
+  </div>
+</header>
+<nav>
+  <button data-view="entry" class="active">Enter Picks</button>
+  <button data-view="board">Leaderboard</button>
+  <button data-view="admin">Admin / Scoring</button>
+</nav>
+<main>
+  <!-- ENTRY VIEW -->
+  <section id="view-entry">
+    <div id="okBanner" class="banner ok"></div>
+    <div id="lockBanner" class="banner" style="display:none;background:#fdecea;border:1px solid #f5b5ae;color:#8a1c12">🔒 Picks are locked — the tournament has begun. Entries can no longer be added or changed.</div>
+    <p class="muted" id="editHint">Already entered? You can change your picks any time until the tournament begins — just re-submit with the same team name and email.</p>
+    <form id="entryForm"></form>
+  </section>
+
+  <!-- LEADERBOARD VIEW -->
+  <section id="view-board" class="hide">
+    <div class="card">
+      <div class="toolbar">
+        <strong style="font-size:17px;color:var(--green)">Leaderboard</strong>
+        <span class="muted" id="boardCount"></span>
+        <span style="flex:1"></span>
+        <span class="live" id="liveBadge"><span class="dot"></span>LIVE</span>
+      </div>
+      <div id="boardWrap"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN VIEW -->
+  <section id="view-admin" class="hide">
+    <div class="card" id="adminLock">
+      <strong style="font-size:17px;color:var(--green)">🔒 Admin access</strong>
+      <p class="muted">Enter the admin password to manage scoring and entries.</p>
+      <div class="field" style="max-width:320px">
+        <input type="password" id="adminPw" placeholder="Password" autocomplete="off">
+        <div class="err" id="adminPwErr"></div>
+      </div>
+      <button class="btn" id="adminUnlock">Unlock</button>
+    </div>
+    <div id="adminContent" class="hide">
+    <div class="card">
+      <strong style="font-size:17px;color:var(--green)">Tournament Scoring</strong>
+      <p class="muted">Enter each golfer's score relative to par (e.g. <b>-4</b>, <b>2</b>, or <b>CUT</b>). Scoring is <b>best 4 of 6</b>: each entry counts its four lowest scores and drops the two worst (shown as CUT). Lowest total leads. Update these as the tournament progresses and the leaderboard recalculates instantly.</p>
+      <div class="toolbar">
+        <button class="btn sm" id="saveScores">Save scores</button>
+        <button class="btn ghost sm" id="clearScores">Clear all scores</button>
+        <span style="flex:1"></span>
+        <button class="btn sm" id="simulate" style="background:#c8102e">🎲 Simulate tournament</button>
+        <button class="btn ghost sm" id="removeDemo">Remove demo data</button>
+      </div>
+      <p class="muted" style="margin-top:-4px">Simulate fills random final scores for all 68 golfers and adds 8 demo entries so you can watch the leaderboard rank and track. Use “Remove demo data” to clear it before going live.</p>
+      <div id="adminGolfers"></div>
+    </div>
+    <div class="card">
+      <strong style="font-size:17px;color:var(--green)">Entries &amp; Data</strong>
+      <p class="muted">Submissions are saved in this browser. To collect picks from other people's devices, have them export their entry and you import it here (or host this file with a shared backend).</p>
+      <div class="toolbar">
+        <button class="btn ghost sm" id="exportAll">Export all data (JSON)</button>
+        <button class="btn ghost sm" id="importBtn">Import data (JSON)</button>
+        <input type="file" id="importFile" accept="application/json" class="hide">
+        <button class="btn danger sm" id="wipe">Delete all entries</button>
+      </div>
+      <div id="adminEntries"></div>
+    </div>
+    </div><!-- /adminContent -->
+  </section>
+</main>
+
+<script>
+/* ---------- POOL DATA (exact players & tiers from source picksheet) ---------- */
+const POOL_NAME = "'Cock Fight!!!!";
+const TIERS = [
+  { name:"Tier 1", pick:1, golfers:[
+    {n:"Scottie Scheffler",wr:"1",odds:"5/1"},
+    {n:"Rory McIlroy",wr:"2",odds:"10/1"},
+  ]},
+  { name:"Tier 2", pick:1, golfers:[
+    {n:"Jon Rahm",wr:"8",odds:"10/1"},
+    {n:"Xander Schauffele",wr:"12",odds:"19/1"},
+    {n:"Cameron Young",wr:"3",odds:"20/1"},
+    {n:"Matt Fitzpatrick",wr:"4",odds:"22/1"},
+    {n:"Tommy Fleetwood",wr:"6",odds:"25/1"},
+    {n:"Ludvig Aberg",wr:"13",odds:"26/1"},
+    {n:"Justin Rose",wr:"7",odds:"52/1"},
+    {n:"J.J. Spaun",wr:"9",odds:"61/1"},
+    {n:"Aaron Rai",wr:"14",odds:"110/1"},
+  ]},
+  { name:"Tier 3", pick:1, golfers:[
+    {n:"Bryson DeChambeau",wr:"32",odds:"27/1"},
+    {n:"Brooks Koepka",wr:"110",odds:"33/1"},
+    {n:"Collin Morikawa",wr:"10",odds:"35/1"},
+    {n:"Russell Henley",wr:"5",odds:"37/1"},
+    {n:"Wyndham Clark",wr:"34",odds:"37/1"},
+    {n:"Si Woo Kim",wr:"18",odds:"39/1"},
+    {n:"Justin Thomas",wr:"16",odds:"44/1"},
+    {n:"Tyrrell Hatton",wr:"21",odds:"46/1"},
+    {n:"Patrick Cantlay",wr:"36",odds:"46/1"},
+    {n:"Patrick Reed",wr:"27",odds:"49/1"},
+    {n:"Viktor Hovland",wr:"28",odds:"54/1"},
+    {n:"Hideki Matsuyama",wr:"24",odds:"65/1"},
+    {n:"Robert MacIntyre",wr:"17",odds:"66/1"},
+    {n:"Shane Lowry",wr:"44",odds:"82/1"},
+    {n:"Sepp Straka",wr:"19",odds:"105/1"},
+    {n:"Jason Day",wr:"47",odds:"130/1"},
+  ]},
+  { name:"Tier 4", pick:1, golfers:[
+    {n:"Sam Burns",wr:"30",odds:"38/1"},
+    {n:"Chris Gotterup",wr:"11",odds:"44/1"},
+    {n:"Min Woo Lee",wr:"35",odds:"72/1"},
+    {n:"Ben Griffin",wr:"15",odds:"74/1"},
+    {n:"Maverick McNealy",wr:"37",odds:"76/1"},
+    {n:"Adam Scott",wr:"49",odds:"76/1"},
+    {n:"Kurt Kitayama",wr:"31",odds:"78/1"},
+    {n:"Harris English",wr:"22",odds:"88/1"},
+    {n:"Gary Woodland",wr:"45",odds:"115/1"},
+    {n:"Akshay Bhatia",wr:"29",odds:"140/1"},
+    {n:"Keegan Bradley",wr:"39",odds:"145/1"},
+    {n:"Alexander Noren",wr:"20",odds:"155/1"},
+    {n:"Sahith Theegala",wr:"83",odds:"170/1"},
+    {n:"Daniel Berger",wr:"46",odds:"210/1"},
+    {n:"Nick Taylor",wr:"63",odds:"240/1"},
+  ]},
+  { name:"Tier 5", pick:1, golfers:[
+    {n:"Bud Cauley",wr:"40",odds:"96/1"},
+    {n:"Alex Smalley",wr:"42",odds:"105/1"},
+    {n:"Kristoffer Reitan",wr:"26",odds:"115/1"},
+    {n:"J.T. Poston",wr:"38",odds:"115/1"},
+    {n:"Jacob Bridgeman",wr:"25",odds:"130/1"},
+    {n:"Nicolai Hojgaard",wr:"33",odds:"130/1"},
+    {n:"Sudarshan Yellamaraju",wr:"96",odds:"135/1"},
+    {n:"Keith Mitchell",wr:"100",odds:"140/1"},
+    {n:"Harry Hall",wr:"66",odds:"175/1"},
+    {n:"Ryan Fox",wr:"55",odds:"185/1"},
+    {n:"Tom Kim",wr:"141",odds:"190/1"},
+    {n:"Corey Conners",wr:"56",odds:"210/1"},
+    {n:"Sungjae Im",wr:"74",odds:"210/1"},
+    {n:"Brian Harman",wr:"59",odds:"240/1"},
+    {n:"Ryo Hisatsune",wr:"62",odds:"240/1"},
+    {n:"Davis Thompson",wr:"138",odds:"240/1"},
+    {n:"Andrew Novak",wr:"61",odds:"310/1"},
+    {n:"Billy Horschel",wr:"135",odds:"575/1"},
+  ]},
+  { name:"WILDCARD BITCHES", pick:1, golfers:[
+    {n:"Jordan Spieth",wr:"51",odds:"69/1"},
+    {n:"Joaquin Niemann",wr:"80",odds:"69/1"},
+    {n:"Jake Knapp",wr:"43",odds:"94/1"},
+    {n:"Rickie Fowler",wr:"41",odds:"110/1"},
+    {n:"Alex Fitzpatrick",wr:"69",odds:"110/1"},
+    {n:"Cameron Smith",wr:"136",odds:"160/1"},
+    {n:"Dustin Johnson",wr:">200",odds:"165/1"},
+    {n:"Michael Kim",wr:"50",odds:"310/1"},
+  ]},
+];
+
+/* Tiebreaker options: Even par, 1-40 under, 1-10 over */
+function tiebreakerOptions(){
+  let o = ['<option value="">Select a score ...</option>','<option value="0">Even Par</option>'];
+  for(let i=1;i<=40;i++) o.push(`<option value="${-i}">${i} under par</option>`);
+  for(let i=1;i<=10;i++) o.push(`<option value="${i}">${i} over par</option>`);
+  return o.join("");
+}
+
+/* ---------- EXTERNAL LINKS ---------- */
+// ESPN: search deep-link resolves to the player's profile/scorecard for the live event.
+const espnUrl=n=>`https://www.espn.com/search/results?q=${encodeURIComponent(n)}`;
+// Kalshi: search deep-link to the golfer's current U.S. Open betting market.
+const kalshiUrl=n=>`https://kalshi.com/search?query=${encodeURIComponent(n)}`;
+const ESPN_GAMECAST="https://www.espn.com/golf/leaderboard";
+function linkPills(n){
+  return `<span class="links">`+
+    `<a class="espn" href="${espnUrl(n)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="ESPN scorecard & Gamecast">ESPN</a>`+
+    `<a class="kalshi" href="${kalshiUrl(n)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Kalshi betting odds">Kalshi</a>`+
+  `</span>`;
+}
+
+/* ---------- STORAGE ---------- */
+const KEY_ENTRIES="cockfight_entries", KEY_SCORES="cockfight_scores";
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let entries=load(KEY_ENTRIES,[]);
+let scores=load(KEY_SCORES,{}); // {golfer:{r1,r2,r3,r4}}
+
+/* ---------- TOURNAMENT LOCK ---------- */
+// Tees off Thu Jun 18, 2026 at Shinnecock Hills. Before then, picks are editable
+// and hidden on the leaderboard; once begun, picks lock and reveal.
+const TOURNEY_START=new Date(2026,5,18,0,0,0); // month 5 = June
+function tournamentBegun(){
+  if(Date.now()>=TOURNEY_START.getTime()) return true;
+  return Object.values(load(KEY_SCORES,{})).some(o=>o&&typeof o==="object"
+    ? Object.values(o).some(v=>v!==null&&v!==undefined&&v!=="")
+    : (o!==null&&o!==undefined&&o!==""));
+}
+
+/* ---------- NAV ---------- */
+const views={entry:document.getElementById("view-entry"),board:document.getElementById("view-board"),admin:document.getElementById("view-admin")};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  Object.values(views).forEach(v=>v.classList.add("hide"));
+  views[b.dataset.view].classList.remove("hide");
+  if(b.dataset.view==="board") renderBoard();
+  if(b.dataset.view==="admin") showAdmin();
+  if(b.dataset.view==="entry") applyEntryLock();
+});
+
+/* ---------- ADMIN PASSWORD GATE ---------- */
+const ADMIN_PW="puttertaps";
+const adminUnlocked=()=>sessionStorage.getItem("cf_admin")==="1";
+function showAdmin(){
+  const locked=!adminUnlocked();
+  document.getElementById("adminLock").classList.toggle("hide",!locked);
+  document.getElementById("adminContent").classList.toggle("hide",locked);
+  if(locked){const p=document.getElementById("adminPw");p.value="";document.getElementById("adminPwErr").textContent="";p.focus();}
+  else renderAdmin();
+}
+function tryUnlock(){
+  if(document.getElementById("adminPw").value===ADMIN_PW){sessionStorage.setItem("cf_admin","1");showAdmin();}
+  else document.getElementById("adminPwErr").textContent="Incorrect password.";
+}
+document.getElementById("adminUnlock").onclick=tryUnlock;
+document.getElementById("adminPw").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock();});
+
+/* ---------- ENTRY FORM ---------- */
+function buildForm(){
+  const f=document.getElementById("entryForm");
+  let html="";
+  TIERS.forEach((t,ti)=>{
+    html+=`<div class="card"><div class="tier-head"><h3>${t.name}</h3><span class="pick">Pick ${t.pick}</span></div><div class="golfers">`;
+    t.golfers.forEach((g,gi)=>{
+      const id=`t${ti}_g${gi}`;
+      html+=`<label class="golfer" for="${id}">
+        <input type="radio" name="tier${ti}" id="${id}" value="${esc(g.n)}">
+        <span><span class="gname">${esc(g.n)}</span><br>
+        <span class="gmeta">WR <b>${g.wr}</b> &nbsp;·&nbsp; ODDS <b>${g.odds}</b></span><br>
+        ${linkPills(g.n)}</span>
+      </label>`;
+    });
+    html+=`</div><div class="err" id="errTier${ti}"></div></div>`;
+  });
+  // tiebreaker + info
+  html+=`<div class="card">
+    <div class="field">
+      <label>Tiebreaker — what will the winning golfer's final score be (not including playoff holes)?</label>
+      <select id="tb">${tiebreakerOptions()}</select>
+      <div class="err" id="errTb"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Team Name</label><input id="team" maxlength="20" placeholder="Your team nickname"><div class="err" id="errTeam"></div></div>
+      <div class="field"><label>Name</label><input id="name" maxlength="50" placeholder="Your real name"><div class="err" id="errName"></div></div>
+    </div>
+    <div class="field"><label>Email</label><input id="email" type="email" maxlength="255" placeholder="you@example.com"><div class="err" id="errEmail"></div></div>
+    <div class="terms"><input type="checkbox" id="terms"><label for="terms" style="font-weight:400">By joining this contest you agree to share your details with the pool administrator.</label></div>
+    <div class="err" id="errTerms"></div>
+    <button type="submit" class="btn">Submit Entry</button>
+    <button type="button" class="btn ghost" id="clearPicks">Clear Picks</button>
+  </div>`;
+  f.innerHTML=html;
+
+  // selection highlight
+  f.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener("change",()=>{
+    const name=r.name;
+    f.querySelectorAll(`input[name="${name}"]`).forEach(x=>x.closest("label").classList.toggle("sel",x.checked));
+  }));
+  document.getElementById("clearPicks").onclick=()=>{ f.reset(); f.querySelectorAll("label.golfer").forEach(l=>l.classList.remove("sel")); };
+  f.addEventListener("submit",onSubmit);
+}
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+function onSubmit(e){
+  e.preventDefault();
+  if(tournamentBegun()){ applyEntryLock(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  let ok=true;
+  document.querySelectorAll(".err").forEach(x=>x.textContent="");
+  const picks=[];
+  TIERS.forEach((t,ti)=>{
+    const sel=document.querySelector(`input[name="tier${ti}"]:checked`);
+    if(!sel){document.getElementById("errTier"+ti).textContent=`Must select ${t.pick} from ${t.name}`;ok=false;}
+    else picks.push({tier:t.name,golfer:sel.value});
+  });
+  const tb=document.getElementById("tb").value;
+  if(tb===""){document.getElementById("errTb").textContent="Must select a tiebreaker";ok=false;}
+  const team=document.getElementById("team").value.trim();
+  const name=document.getElementById("name").value.trim();
+  const email=document.getElementById("email").value.trim();
+  // an existing team name is OK only if the same email owns it (that's an edit)
+  const existing=entries.find(en=>en.team.toLowerCase()===team.toLowerCase());
+  if(team.length<2||team.length>20){document.getElementById("errTeam").textContent="Team name must be 2–20 characters";ok=false;}
+  else if(existing && existing.email.toLowerCase()!==email.toLowerCase()){document.getElementById("errTeam").textContent="Team name already taken";ok=false;}
+  if(name.length<1||name.length>50){document.getElementById("errName").textContent="Name must be 1–50 characters";ok=false;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){document.getElementById("errEmail").textContent="Enter a valid email address";ok=false;}
+  if(!document.getElementById("terms").checked){document.getElementById("errTerms").textContent="Must accept contest terms";ok=false;}
+  if(!ok){window.scrollTo({top:0,behavior:"smooth"});return;}
+
+  const isEdit = !!existing;
+  if(isEdit){
+    existing.name=name; existing.email=email; existing.tiebreaker=Number(tb); existing.picks=picks; existing.updated=new Date().toISOString();
+  } else {
+    entries.push({id:Date.now()+"-"+Math.random().toString(36).slice(2,7),team,name,email,tiebreaker:Number(tb),picks,submitted:new Date().toISOString()});
+  }
+  save(KEY_ENTRIES,entries);
+  document.getElementById("entryForm").reset();
+  document.querySelectorAll("label.golfer").forEach(l=>l.classList.remove("sel"));
+  const b=document.getElementById("okBanner");
+  b.innerHTML=isEdit
+    ? `<b>Picks updated.</b> "${esc(team)}" has been changed. You can keep editing until the tournament begins. View the <a href="#" id="goBoard">leaderboard</a>.`
+    : `<b>Success! Team submitted.</b> "${esc(team)}" is in the pool. You can edit your picks anytime before the tournament begins by re-submitting with the same team name and email. View the <a href="#" id="goBoard">leaderboard</a>.`;
+  b.style.display="block"; window.scrollTo({top:0,behavior:"smooth"});
+  document.getElementById("goBoard").onclick=ev=>{ev.preventDefault();document.querySelector('nav button[data-view="board"]').click();};
+}
+// Lock the entry form once the tournament begins (no new entries or edits).
+function applyEntryLock(){
+  const started=tournamentBegun();
+  const banner=document.getElementById("lockBanner");
+  if(banner) banner.style.display=started?"block":"none";
+  const hint=document.getElementById("editHint");
+  if(hint) hint.style.display=started?"none":"block";
+  const form=document.getElementById("entryForm");
+  if(form) form.querySelectorAll("input,select,button").forEach(el=>{el.disabled=started;});
+}
+
+/* ---------- SCORING (per-round, best 4 of 6) ---------- */
+// scores[golfer] = {r1,r2,r3,r4} to-par per round (number) or blank if not played.
+const ROUNDS=["r1","r2","r3","r4"];
+function golferRounds(g){
+  let s=scores[g];
+  if(s==null) s={};
+  if(typeof s!=="object") s={r1:s};            // legacy single-value support
+  return ROUNDS.map(r=>{const v=s[r];return (v===undefined||v===null||v===""||isNaN(Number(v)))?null:Number(v);});
+}
+function golferData(g){
+  const r=golferRounds(g);
+  const played=r.filter(v=>v!==null);
+  return {rounds:r, played:played.length, total: played.length?played.reduce((a,b)=>a+b,0):null};
+}
+function scoreEntry(en){
+  const list=en.picks.map(p=>{const d=golferData(p.golfer);return {tier:p.tier,golfer:p.golfer,...d};});
+  const eligible=list.filter(x=>x.total!==null).sort((a,b)=>a.total-b.total); // best (lowest) first
+  const pending=list.filter(x=>x.total===null);
+  const nCount=Math.min(4,eligible.length);
+  const counters=eligible.slice(0,nCount);   // best four count
+  const dropped=eligible.slice(nCount);        // worst two are cut
+  const status={};
+  counters.forEach(x=>status[x.golfer]="counted");
+  dropped.forEach(x=>status[x.golfer]="cut");
+  pending.forEach(x=>status[x.golfer]="pending");
+  const total=counters.reduce((s,x)=>s+x.total,0);
+  // team round score = sum of the counting golfers' that-round scores
+  const teamRounds=ROUNDS.map((_,ri)=>{
+    const vals=counters.map(x=>x.rounds[ri]).filter(v=>v!==null);
+    return vals.length?vals.reduce((a,b)=>a+b,0):null;
+  });
+  return {total,teamRounds,counted:nCount,dropped:dropped.length,pending:pending.length,list,status,anyScored:eligible.length>0};
+}
+const fmt=n=>n>0?`+${n}`:`${n}`;
+// golf-style to-par: E for even, red text under par
+const par=n=>n===null?"–":(n===0?"E":(n>0?`+${n}`:`${n}`));
+const parCls=n=>n===null?"":(n<0?"under":(n>0?"over":"even"));
+function parCell(n){return `<span class="${parCls(n)}">${par(n)}</span>`;}
+
+/* ---------- LEADERBOARD ---------- */
+function renderBoard(){
+  document.getElementById("boardCount").textContent=`${entries.length} entr${entries.length===1?"y":"ies"}`;
+  const scored=Object.values(scores).some(o=>o&&typeof o==="object"?Object.values(o).some(v=>v!==null&&v!==undefined&&v!==""):(o!==null&&o!==undefined&&o!==""));
+  const wrap=document.getElementById("boardWrap");
+  if(entries.length===0){wrap.innerHTML='<div class="empty">No entries yet. Be the first to submit picks!</div>';return;}
+
+  const locked=!tournamentBegun(); // hide golfer picks until the tournament starts
+  // remember which teams the viewer has collapsed so a refresh doesn't reopen them
+  wrap.querySelectorAll("details[data-team]").forEach(d=>{ boardOpen[d.dataset.team]=d.open; });
+
+  const rows=entries.map(en=>({en,...scoreEntry(en)}));
+  if(scored){
+    rows.sort((a,b)=> (a.total-b.total) || (Math.abs(a.en.tiebreaker)-Math.abs(b.en.tiebreaker)) );
+  }
+  let html=`<table class="board"><thead><tr>`;
+  html+=`
+    <th class="num">Pos</th><th>Team</th>
+    <th class="num rnd">R1</th><th class="num rnd">R2</th><th class="num rnd">R3</th><th class="num rnd">R4</th>
+    <th class="num">Total</th></tr></thead><tbody>`;
+  rows.forEach((r,i)=>{
+    const tb = r.en.tiebreaker===0?"E":fmt(r.en.tiebreaker);
+    // condensed: each golfer on one row — name (+links) | R1 R2 R3 R4 | total
+    const golferLines = r.list.map(x=>{
+      const st=r.status[x.golfer];
+      const cls = st==="cut" ? " dropped" : "";
+      const badge = st==="cut" ? '<span class="cut">CUT</span>' : (st==="pending" ? '<span class="pend">–</span>' : '<span class="ok">●</span>');
+      const rounds = x.rounds.map(v=>`<span class="rs">${parCell(v)}</span>`).join("");
+      return `<div class="gline${cls}">
+        <span class="gl-name"><span class="nm">${badge} ${esc(x.golfer)}</span><span class="gl-lnk"><a href="${espnUrl(x.golfer)}" target="_blank" rel="noopener">ESPN</a> · <a href="${kalshiUrl(x.golfer)}" target="_blank" rel="noopener">Kalshi</a></span></span>
+        <span class="gl-rounds">${rounds}</span>
+        <span class="gl-tot">${parCell(x.total)}</span>
+      </div>`;
+    }).join("");
+    const openAttr = (boardOpen[r.en.id]!==false) ? " open" : "";
+    const subText = locked ? esc(r.en.name) : `${esc(r.en.name)} · Tiebreaker ${tb}`;
+    const body = locked
+      ? `<p class="locked-note">🔒 Picks are hidden until the tournament begins (Thu, Jun 18).</p>`
+      : `<div class="gline ghead"><span class="gl-name">Golfer</span><span class="gl-rounds"><i>R1</i><i>R2</i><i>R3</i><i>R4</i></span><span class="gl-tot">Tot</span></div>${golferLines}`;
+    const detail=`<details class="picks" data-team="${esc(r.en.id)}"${openAttr}><summary><span class="tc-team">${esc(r.en.team)}</span><span class="tc-sub">${subText}</span></summary>
+      <div class="team-card-body">
+      ${body}
+      </div></details>`;
+    html+=`<tr class="entry">
+      <td class="num rank rank-cell" data-label="Pos">${scored?i+1:"—"}</td>
+      <td class="team-cell" data-label="Team"><span class="tag">${esc(r.en.team)}</span><span class="name-sub">${esc(r.en.name)}</span></td>
+      <td class="num rnd r-cell" data-label="R1">${scored?parCell(r.teamRounds[0]):"–"}</td>
+      <td class="num rnd r-cell" data-label="R2">${scored?parCell(r.teamRounds[1]):"–"}</td>
+      <td class="num rnd r-cell" data-label="R3">${scored?parCell(r.teamRounds[2]):"–"}</td>
+      <td class="num rnd r-cell" data-label="R4">${scored?parCell(r.teamRounds[3]):"–"}</td>
+      <td class="num total-cell" data-label="Total"><b>${scored?parCell(r.total):"–"}</b></td>
+    </tr>
+    <tr class="detail-row"><td colspan="7">${detail}</td></tr>`;
+  });
+  html+="</tbody></table>";
+  wrap.innerHTML=html;
+  lastBoardSig=boardSignature();
+}
+/* ---------- LIVE UPDATES ---------- */
+// Open/closed state per team (id -> bool) and a content signature so refreshes
+// only redraw when scores/entries actually changed — never mid-scroll for nothing.
+const boardOpen={};
+let lastBoardSig=null;
+function boardSignature(){
+  return JSON.stringify(scores)+"|"+entries.map(e=>e.id+":"+e.tiebreaker+":"+e.picks.map(p=>p.golfer).join(",")).join("|");
+}
+// Reloads data from storage and re-renders whatever view is showing, so the
+// leaderboard tracks live as scores/entries change (including edits made in another tab).
+function liveRefresh(){
+  entries=load(KEY_ENTRIES,[]); scores=load(KEY_SCORES,{});
+  if(!views.board.classList.contains("hide")){
+    // Only redraw if the data actually changed — otherwise leave the user's
+    // scroll position and any collapsed teams untouched.
+    if(boardSignature()!==lastBoardSig){
+      const y=window.scrollY;
+      renderBoard();
+      window.scrollTo(0,y);
+      const b=document.getElementById("liveBadge");
+      if(b) b.innerHTML=`<span class="dot"></span>LIVE<span class="updated">updated ${new Date().toLocaleTimeString()}</span>`;
+    }
+  } else if(!views.admin.classList.contains("hide") && adminUnlocked()){
+    renderAdminEntries();
+  }
+}
+// Cross-tab: fires when another tab writes to localStorage (e.g. admin saving scores).
+window.addEventListener("storage", e=>{ if(e.key===KEY_ENTRIES||e.key===KEY_SCORES) liveRefresh(); });
+// Same-tab polling so the board stays current while the tournament progresses.
+setInterval(liveRefresh, 5000);
+// Refresh immediately when the tab regains focus.
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) liveRefresh(); });
+
+/* ---------- ADMIN ---------- */
+function renderAdmin(){
+  // golfer score inputs
+  const g=document.getElementById("adminGolfers");
+  let html="";
+  TIERS.forEach(t=>{
+    html+=`<div style="margin-top:12px"><div class="pill" style="font-weight:700;color:var(--green)">${esc(t.name)}</div>
+      <div class="admin-head"><span class="gname"></span><span class="rlabels"><i>R1</i><i>R2</i><i>R3</i><i>R4</i></span></div>`;
+    t.golfers.forEach(gf=>{
+      const s=(scores[gf.n]&&typeof scores[gf.n]==="object")?scores[gf.n]:{};
+      const inp=ROUNDS.map(r=>{const v=(s[r]===undefined||s[r]===null)?"":s[r];
+        return `<input data-golfer="${esc(gf.n)}" data-round="${r}" value="${esc(v)}" placeholder="–" inputmode="numeric">`;}).join("");
+      html+=`<div class="admin-golfer"><span class="gname">${esc(gf.n)}</span><span class="rinputs">${inp}</span></div>`;
+    });
+    html+=`</div>`;
+  });
+  g.innerHTML=html;
+  renderAdminEntries();
+}
+function renderAdminEntries(){
+  const e=document.getElementById("adminEntries");
+  if(entries.length===0){e.innerHTML='<div class="empty">No entries yet.</div>';return;}
+  let html=`<table><thead><tr><th>Team</th><th>Name</th><th>Email</th><th>Submitted</th><th></th></tr></thead><tbody>`;
+  entries.forEach(en=>{
+    html+=`<tr class="entry"><td><span class="tag">${esc(en.team)}</span></td><td>${esc(en.name)}</td>
+      <td class="muted">${esc(en.email)}</td><td class="muted">${new Date(en.submitted).toLocaleString()}</td>
+      <td class="num"><button class="btn danger sm" data-del="${en.id}">remove</button></td></tr>`;
+  });
+  html+="</tbody></table>";
+  e.innerHTML=html;
+  e.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+    if(confirm("Remove this entry?")){entries=entries.filter(x=>x.id!==b.dataset.del);save(KEY_ENTRIES,entries);renderAdminEntries();}
+  });
+}
+document.getElementById("saveScores").onclick=()=>{
+  const map={};
+  document.querySelectorAll("#adminGolfers input").forEach(inp=>{
+    const name=inp.dataset.golfer, r=inp.dataset.round, val=inp.value.trim();
+    if(val==="") return;
+    if(!map[name]) map[name]={};
+    if(!isNaN(Number(val))) map[name][r]=Number(val);
+  });
+  scores=map; save(KEY_SCORES,scores);
+  alert("Round scores saved. The leaderboard will update.");
+};
+document.getElementById("clearScores").onclick=()=>{if(confirm("Clear all golfer scores?")){scores={};save(KEY_SCORES,scores);renderAdmin();}};
+
+/* ---------- SIMULATION (demo) ---------- */
+const rand=arr=>arr[Math.floor(Math.random()*arr.length)];
+const DEMO_TEAMS=["Fairway Frank","Birdie Brigade","Bogey Bob","Eagle Eddie","Sandy Sammy","Mulligan Mike","Tee Time Tina","Putt Pirates"];
+function simulateTournament(){
+  // 1) random round-by-round scores for every golfer (~12% miss the cut after R2)
+  scores={};
+  const rnd=()=>Math.floor(Math.random()*13)-6; // a round: -6..+6 to par
+  TIERS.forEach(t=>t.golfers.forEach(g=>{
+    const o={r1:rnd(),r2:rnd()};
+    if(Math.random()>=0.12){o.r3=rnd();o.r4=rnd();} // made the cut → 4 rounds
+    scores[g.n]=o;
+  }));
+  // 2) add demo entries (skipping names already used)
+  const used=new Set(entries.map(e=>e.team.toLowerCase()));
+  DEMO_TEAMS.forEach((nm,i)=>{
+    if(used.has(nm.toLowerCase())) return;
+    const picks=TIERS.map(t=>({tier:t.name,golfer:rand(t.golfers).n}));
+    entries.push({id:"demo-"+Date.now()+"-"+i,team:nm,name:nm,email:`demo${i}@example.com`,
+      tiebreaker:-(Math.floor(Math.random()*10)+1),picks,submitted:new Date().toISOString(),demo:true});
+  });
+  save(KEY_ENTRIES,entries); save(KEY_SCORES,scores);
+  renderAdmin();
+  document.querySelector('nav button[data-view="board"]').click();
+}
+document.getElementById("simulate").onclick=simulateTournament;
+document.getElementById("removeDemo").onclick=()=>{
+  entries=entries.filter(e=>!e.demo); save(KEY_ENTRIES,entries);
+  scores={}; save(KEY_SCORES,scores);
+  renderAdmin();
+  alert("Demo entries and simulated scores removed.");
+};
+document.getElementById("wipe").onclick=()=>{if(confirm("Delete ALL entries? This cannot be undone.")){entries=[];save(KEY_ENTRIES,entries);renderAdminEntries();renderBoard();}};
+
+/* export / import */
+document.getElementById("exportAll").onclick=()=>{
+  const blob=new Blob([JSON.stringify({pool:POOL_NAME,entries,scores},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="cockfight-pool-data.json";a.click();
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=ev=>{
+  const file=ev.target.files[0]; if(!file)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const data=JSON.parse(rd.result);
+      const incoming=Array.isArray(data)?data:(data.entries||[]);
+      let added=0;
+      incoming.forEach(en=>{
+        if(en&&en.team&&!entries.some(x=>x.id===en.id||x.team.toLowerCase()===en.team.toLowerCase())){entries.push(en);added++;}
+      });
+      if(data.scores) scores={...scores,...data.scores};
+      save(KEY_ENTRIES,entries);save(KEY_SCORES,scores);
+      renderAdmin();
+      alert(`Imported ${added} new entr${added===1?"y":"ies"}.`);
+    }catch(err){alert("Could not read that file: "+err.message);}
+  };
+  rd.readAsText(file);
+  ev.target.value="";
+};
+
+buildForm();
+applyEntryLock();
+
+/* ---------- DEFAULT VIEW ---------- */
+// Once the tournament has begun, open straight to the live Leaderboard.
+if(tournamentBegun()){
+  document.querySelector('nav button[data-view="board"]').click();
+}
+</script>
+</body>
+</html>
