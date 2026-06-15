@@ -355,7 +355,7 @@ let scores=load(KEY_SCORES,{}); // {golfer:{r1,r2,r3,r4}}
 /* ---------- BACKEND (Google Apps Script) ---------- */
 // Paste your deployed Apps Script Web App URL between the quotes to turn on shared,
 // cross-device storage. Leave it blank to keep all data in this browser only.
-const BACKEND_URL="https://script.google.com/macros/s/AKfycbyrbX5m0M9nDQQIlkilrP_D4wZq62FIZVdts460US9hKUG0yrO4lWytMrfsmovtfhjejA/exec";
+const BACKEND_URL="https://script.google.com/macros/s/AKfycby_hdXC3QFxmOHACd8TN0B02TmgQ6zcupixXLcBFxi1/dev";
 const apiEnabled=()=>/^https?:\/\//.test(BACKEND_URL);
 async function apiPull(){
   if(!apiEnabled()) return false;
